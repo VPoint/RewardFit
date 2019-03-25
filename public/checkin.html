@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>RewardFit</title>
+
+    <!-- update the version number as needed -->
+    <script defer src="/__/firebase/5.9.1/firebase-app.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script defer src="/__/firebase/5.9.1/firebase-auth.js"></script>
+    <script defer src="/__/firebase/5.9.1/firebase-database.js"></script>
+    <script defer src="/__/firebase/5.9.1/firebase-messaging.js"></script>
+    <script defer src="/__/firebase/5.9.1/firebase-storage.js"></script>
+	<script defer src="/__/firebase/5.9.1/firebase-firestore.js"></script>
+	
+    <!-- initialize the SDK after all desired features are loaded -->
+    <script defer src="/__/firebase/init.js"></script>
+
+    <style media="screen">
+      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
+      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
+      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
+      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
+      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
+      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
+      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
+      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
+      @media (max-width: 600px) {
+        body, #message { margin-top: 0; background: white; box-shadow: none; }
+        body { border-top: 16px solid #ffa100; }
+      }
+    </style>
+	
+	<script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
+	<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
+
+	<script src="https://maps.googleapis.com/maps/api/js?key=[APIKEY]&callback=getLocation&libraries=places" async defer></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+	<script src="https://www.gstatic.com/firebasejs/5.9.1/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/5.9.1/firebase-firestore.js"></script>
+</head>
+<body>
+<style>
+body {font-family: Arial, Helvetica, sans-serif;}
+form {border: 3px solid #f1f1f1;}
+
+button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+/* Change styles for span and cancel button on extra small screens */
+@media screen and (max-width: 300px) {
+  span.psw {
+     display: block;
+     float: none;
+  }
+  .cancelbtn {
+     width: 100%;
+  }
+}
+</style>
+<ul id="pills-tab" role="tablist" class="nav nav-pills nav-fill justify-content-center">
+  <li class="nav-item">
+    <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Check In</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Rewards</a>
+  </li>
+</ul>
+<div class="tab-content" id="pills-tabContent">
+  <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+		<h1>Check-In to Your Gym</h1>
+		<p>Click the button to verify your coordinates again.</p>
+		<p id="status"></p>
+		<button onclick="getLocation()">Check-in to your gym!</button>
+		<div id="map" style="height:70vh, width:100%"></div>
+		<p id="demo"></p>
+  </div>
+  <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+	  <div id="profile_info">
+			<p id="profile_message">Hi Person, you Have 127,900 points </p>
+	  </div>
+	  <div id="rewards_list">
+	  </div>
+  </div>
+</div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          let app = firebase.app();
+           console.log("Collecting user info");
+		   
+		    var db = firebase.firestore();
+			var uid, points,userRef;
+			
+			firebase.auth().onAuthStateChanged(function(user) {
+			  if (user) {
+				  uid = user.uid;
+				  console.log(uid)
+				  db.collection("users").doc(uid).get()
+					.then(doc => {
+						if (!doc.exists) {
+							console.log('No such document!');
+							persistInDB(user);
+						} else {
+							console.log('Document data:', doc.data());
+						}
+					})
+					.catch(err => {
+						console.log('Error getting document', err);
+					});
+					
+				userRef = db.collection('users').doc(uid);
+				userRef.onSnapshot(function(doc) {
+				console.log("Current data: ", doc.data());
+				user = doc.data()
+				points = user.points;
+				message.innerHTML = "Hi " + user.name + ", you have "+ user.points +" to redeem.";
+			});
+			  } else {
+				// No user is signed in.
+				window.location.href = "/login.html";
+			  }
+			});
+		
+			db.collection("discounts").get().then((querySnapshot) => {
+				var rewards = document.getElementById("rewards_list");
+				querySnapshot.forEach((doc) => {
+					rewards.innerHTML += "<h2>" +doc.data().name + "</h2><p>" + doc.data().description+ "</p><p> Price: " + doc.data().price+ " points</p>"
+					rewards.innerHTML +='<p id="code_'+doc.id+'"></p><button id="butt_'+doc.id+'" onclick="generateCode(\'code_'+doc.id+'\')">Redeem your points</button>'
+					code_gen = document.getElementById("butt_"+doc.id)
+					code_gen.disabled = !(parseInt(points) > parseInt(doc.data().price));
+					if(code_gen.disabled){
+						code_gen.innerHTML = "You can't redeem this right now."
+					}
+					code_gen.addEventListener('click', function(e) {
+						console.log(e)
+						console.log("REMOVE POINTS")
+						code_area = document.getElementById("code_"+doc.id)
+						points = parseInt(points) - doc.data().price
+						
+						userRef.update({
+							points: points,
+							codes: firebase.firestore.FieldValue.arrayUnion(code_area.innerHTML)
+						});
+					})
+					console.log(doc.id  + " : " + doc.data().name + " " + doc.data().description);
+					
+				});
+			});
+			
+			
+		function persistInDB(user){
+			db.collection("users").doc(user.uid).set({
+					name: user.displayName,
+					email: user.email,
+					points: 0,
+					active: true
+				}, { merge: true })
+				.then(function() {
+					console.log("Document successfully written!");
+				})
+				.catch(function(error) {
+					console.error("Error writing document: ", error);
+				});	
+		}
+	});
+    </script>
+
+<script>
+var x = document.getElementById("demo");
+var state = document.getElementById("status");
+var message = document.getElementById("profile_message");
+var map;
+function getLocation() {
+
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition);
+	console.log("GET LOCATION");
+  } else {
+    x.innerHTML = "Geolocation is not supported by this browser.";
+  }
+}
+
+function callback(results, status) {
+	console.log("CAlled BACK")
+	if (status == google.maps.places.PlacesServiceStatus.OK) {
+		if( results.length > 0) {
+		  state.innerHTML = "Congrats on your workout. You have recieved 100 points!"
+		  addPoints();
+		  console.log("FOUND A GYM");
+			console.log("ADD POINTS")
+			points = parseInt(points) + 100
+			
+			userRef.update({
+				points: points
+			});
+		  console.log(results);
+		  for (var i = 0; i < results.length; i++) {
+			  var place = results[i];
+			  createMarker(place);
+		  }
+		} else {
+			console.log("NO GYM");
+			state.innerHTML = "Wait a sec. You don't seem to be close to a gym.... you have to be within 200 meters of a gym to recieve points."
+		}
+	} else {
+		console.log("ERROR OCCURED");
+		console.log(status);
+		state.innerHTML = "Oops an error occured! Come back later and try again.";
+	}
+}
+
+function showPosition(position) {
+	lat = position.coords.latitude;
+	lon = position.coords.longitude;
+	map = new google.maps.Map(document.getElementById('map'), {
+	  center: {lat: lat, lng: lon},
+	  zoom: 20
+	});
+	var service = new google.maps.places.PlacesService(map);
+	
+	var request = {
+		location: new google.maps.LatLng(lat,lon),
+		radius: '200',
+		//rankBy: google.maps.places.RankBy.DISTANCE,
+		type: ['gym']
+	  };
+	  
+	  service.nearbySearch(request, callback);
+	  
+  x.innerHTML = "Latitude: " + position.coords.latitude + 
+  "<br>Longitude: " + position.coords.longitude;
+  
+}
+</script>
+	
+	<script>
+			function generateCode(id){
+				code_area = document.getElementById(id)
+				code_area.innerHTML = Math.random().toString(36).substr(2);
+				code_area.style.display = 'block';
+			}
+	</script>
+
+</body>
+</html>
+
